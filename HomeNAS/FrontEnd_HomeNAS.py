@@ -14,6 +14,7 @@ def start_nas_serv():
     subprocess.Popen(["python", "BackEnd_HomeNAS.py"])
 
 def browse_for_upload():
+    # Fonction interne pour parcourir et téléverser un fichier
     def inner_browse_for_upload():
         file_path = filedialog.askopenfilename()
         if file_path:
@@ -40,6 +41,7 @@ def show_ip_entry():
 
 
 def create_ip_frame(ip, start_row=0, start_column=0):
+    # Crée un cadre contenant l'adresse IP spécifiée
     ip_frame = Frame(
         ip_container,
         width=250,
