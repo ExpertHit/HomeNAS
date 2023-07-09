@@ -8,7 +8,7 @@ Flask
 
 Et Request
 
-     python -m pip install request
+     python -m pip install requests
 
 Si vous voulez changer le dossier du serveur, rendez-vous dans BackEnd_HomeNAS.py et modifier cette variable:
 
