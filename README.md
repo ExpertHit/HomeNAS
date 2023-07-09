@@ -15,5 +15,3 @@ Si vous voulez changer le dossier du serveur, rendez-vous dans BackEnd_HomeNAS.p
      storage_path = "C:\\Partage"
 
 Pour lancer l'application, lancer le FrontEnd_Home.py
-
-test vscode git anthony
