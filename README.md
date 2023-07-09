@@ -13,3 +13,5 @@ Et Request
 Si vous voulez changer le dossier du serveur, rendez-vous dans BackEnd_HomeNAS.py et modifier cette variable:
 
      storage_path = "C:\\Partage"
+
+Pour lancer l'application, lancer le FrontEnd_Home.py
