@@ -60,7 +60,44 @@ def show_frame1():
     
 def show_frame2():
     frame1.pack_forget()
-    frame2.pack()
+    frame2.pack(anchor=NW)
+
+def get_files_from_nas():
+    url = "http://localhost:8000/files"  # URL de votre endpoint dans le backend Flask
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        files = response.json()
+        clear_file_list()
+        for file in files:
+            create_file_frame(file)
+    else:
+        clear_file_list()
+        file_frame = Frame(file_list, bg="#4B4949", bd=1)
+        file_frame.pack(fill=X)
+        file_label = Label(file_frame, text="Erreur lors de la récupération des fichiers du NAS", bg="#4B4949", fg="white")
+        file_label.pack(pady=5)
+
+def clear_file_list():
+    for widget in file_list.winfo_children():
+        widget.destroy()
+
+def on_file_frame_clicked(event):
+    file_frame = event.widget
+    if file_frame.cget("bg") == "#089016":
+        file_frame.config(bg="#4B4949")  # Réinitialiser la couleur de fond
+    else:
+        file_frame.config(bg="#089016")  # Mettre en évidence la frame sélectionnée
+
+def create_file_frame(file):
+    file_frame = Frame(file_list, bg="#4B4949", bd=1, pady=10, padx=100)
+    file_frame.pack(fill=X)
+    file_label = Label(file_frame, text=file, bg="#4B4949", fg="white", highlightbackground="#089016")
+    file_label.pack(side=LEFT, pady=5)
+    file_button = Button(file_frame, text="Télécharger", bg="#089016", fg="white", bd=0, relief="flat")
+    file_button.pack(side=RIGHT, pady=5, padx=(20, 0))
+    file_frame.file_label = file_label  # Ajouter une référence au label dans la frame
+    file_frame.bind("<Button-1>", on_file_frame_clicked)
 
 # Création de la fenêtre
 window = Tk()
@@ -72,11 +109,52 @@ frame1 = Frame(window, bg="#403c3c",padx=200, pady=70)
 frame1.place()
 frame1.pack(anchor=NW)
 
-frame2 = Frame(window, bg="#403c3c")
-frame2.place(x=420, y=60)
-frame2.pack_forget()
+frame2 = Frame(window, bg="#403c3c",padx=200, pady=70)
 
-# Création du rectangle a droite de la page
+file_frames = []
+
+# Création d'une zone de scroll pour la liste des fichiers
+scrollbar = Scrollbar(frame2)
+scrollbar.pack(side=RIGHT, fill=Y)
+
+# Création d'un bouton pour mettre à jour la liste des fichiers
+update_button = Button(frame2, text="Mettre à jour", command=get_files_from_nas)
+
+# Création d'un bouton b6
+b6 = Button(
+    frame2,
+    borderwidth=0,
+    highlightthickness=0,
+    command=browse_for_upload(),
+    text="Envoyer un fichier dans le serveur NAS",
+    width=100,
+    height=2,
+    bg="#089016",
+    fg="white",
+    relief="flat"
+)
+
+# Création d'une zone de liste pour afficher les fichiers
+file_list = Listbox(frame2, bg="#403c3c", fg="white")
+file_list.configure(width=100, height=20)
+
+# Configuration de la barre de défilement
+scrollbar.config(command=file_list.yview)
+file_list.config(yscrollcommand=scrollbar.set)
+
+# Placement des éléments dans le cadre frame2
+b6.pack(pady=5)
+file_list.pack(pady=10, padx=20, fill=BOTH, expand=True)
+scrollbar.pack(side=RIGHT, fill=Y)
+
+# Création d'un bouton pour mettre à jour la liste des fichiers
+update_button = Button(frame2, text="Mettre à jour", command=get_files_from_nas)
+update_button.pack(pady=5)
+
+# Création du conteneur pour les IP frames
+ip_container = Frame(window, bg="#403c3c")
+ip_container.place(x=200, y=280)
+
 rectangle = Canvas(
     window,
     bg="#4B4949",
