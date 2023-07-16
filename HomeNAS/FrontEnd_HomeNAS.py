@@ -49,57 +49,79 @@ def create_ip_frame(ip, start_row=0, start_column=0):
         bg="#4B4949",
         bd=1
     )
+    ip_frame.pack_propagate(0)  # Empêche le cadre de redimensionner son contenu
     ip_frame.grid(row=start_row, column=start_column, padx=(10, 30), pady=20)
     ip_label = Label(ip_frame, text=ip, bg="#4B4949", fg="white")
     ip_label.pack(pady=80)
+
+def show_frame1():
+    frame2.pack_forget()
+    frame1.pack(anchor=NW)
+    
+def show_frame2():
+    frame1.pack_forget()
+    frame2.pack()
 
 # Création de la fenêtre
 window = Tk()
 window.geometry("1000x600")
 window.configure(bg="#403c3c")
 
-# Création du canvas pour le fond
-canvas = Canvas(
+# Création des frames pour les boutons b0 et b1
+frame1 = Frame(window, bg="#403c3c",padx=200, pady=70)
+frame1.place()
+frame1.pack(anchor=NW)
+
+frame2 = Frame(window, bg="#403c3c")
+frame2.place(x=420, y=60)
+frame2.pack_forget()
+
+# Création du rectangle a droite de la page
+rectangle = Canvas(
     window,
-    bg="#403c3c",
-    height=600,
-    width=1000,
+    bg="#4B4949",
+    width=183,
+    height=1000,
     bd=0,
     highlightthickness=0,
     relief="ridge"
 )
-canvas.pack()
+rectangle.place(x=0, y=0)
 
-# Chargement de l'image de fond
-background_img = PhotoImage(file="background.png")
-background = canvas.create_image(0, 0, anchor=NW, image=background_img)
-
-# Création du conteneur pour les IP frames
-ip_container = Frame(window, bg="#403c3c")
-ip_container.place(x=200, y=280)
+# Création du rectangle en haut de la page
+rectangle2 = Canvas(
+    window,
+    bg="#089016",
+    width=3000,
+    height=49,
+    bd=0,
+    highlightthickness=0,
+    relief="ridge"
+)
+rectangle2.place(x=0, y=0)
 
 # Création des boutons
 img0 = PhotoImage(file="Bouton_demarrage.png")
 b0 = Button(
-    window,
+    frame1,
     image=img0,
     borderwidth=0,
     highlightthickness=0,
     command=start_nas_serv,
     relief="flat"
 )
-b0.place(x=200, y=60)
+b0.grid(row=0,column=0,padx=10)
 
 img1 = PhotoImage(file="Bouton_connexion_nas.png")
 b1 = Button(
-    window,
+    frame1,
     image=img1,
     borderwidth=0,
     highlightthickness=0,
     command=show_ip_entry,
     relief="flat"
 )
-b1.place(x=420, y=60)
+b1.grid(row=0,column=1,padx=10)
 
 # Création des Labels pour les boutons gauche
 label_tableau = Label(window, bg="#403c3c")
@@ -115,7 +137,7 @@ b2 = Button(
     image=img2,
     borderwidth=0,
     highlightthickness=0,
-    command=btn_clicked,
+    command=show_frame1,
     relief="flat"
 )
 b2.pack(padx=0, pady=0)
@@ -126,11 +148,10 @@ b3 = Button(
     image=img3,
     borderwidth=0,
     highlightthickness=0,
-    command=browse_for_upload(),  # Appel sans argument
+    command=show_frame2,  # Appel sans argument
     relief="flat"
 )
 b3.pack(padx=0, pady=0)
-
 
 img4 = PhotoImage(file="Bouton_parametres.png")
 b4 = Button(
@@ -155,5 +176,7 @@ b5 = Button(
 b5.place(x=950, y=5)
 
 # Exécution de la boucle principale
-window.resizable(False, False)
+window.grid_rowconfigure(0, weight=1)  # Permet à la fenêtre de redimensionner le cadre des IP frames
+window.grid_columnconfigure(0, weight=1)  # Permet à la fenêtre de redimensionner le cadre des IP frames
+window.resizable(True, True)
 window.mainloop()
