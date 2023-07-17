@@ -109,6 +109,7 @@ def create_file_frame(file):
 
 # Création de la fenêtre
 window = Tk()
+window.title("HomeNAS")
 window.geometry("1000x600")
 window.configure(bg="#403c3c")
 
