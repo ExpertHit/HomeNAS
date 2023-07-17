@@ -3,15 +3,23 @@ import subprocess
 from tkinter import messagebox
 from tkinter import simpledialog
 from tkinter import filedialog
+# Création des boutons
+import os
+import sys
 import requests
+import tkinter as tk
+print(tk.TkVersion)
 
 ip_address = ""
+file_dir = os.path.dirname(__file__)
 
 def btn_clicked():
     print("Button Clicked")
 
 def start_nas_serv():
-    subprocess.Popen(["python", "BackEnd_HomeNAS.py"])
+    python_executable = sys.executable
+    backend_script = os.path.join(file_dir, "BackEnd_HomeNAS.py")
+    subprocess.Popen([python_executable, backend_script])
 
 def browse_for_upload():
     # Fonction interne pour parcourir et téléverser un fichier
@@ -178,8 +186,17 @@ rectangle2 = Canvas(
 )
 rectangle2.place(x=0, y=0)
 
+
+# Chemin vers les fichiers d'image
+img0_path = os.path.join(file_dir, "Bouton_demarrage.png")
+img1_path = os.path.join(file_dir, "Bouton_connexion_nas.png")
+img2_path = os.path.join(file_dir, "Bouton_tableau.png")
+img3_path = os.path.join(file_dir, "Bouton_fichiers.png")
+img4_path = os.path.join(file_dir, "Bouton_parametres.png")
+img5_path = os.path.join(file_dir, "bouton_rafraichir.png")
+
 # Création des boutons
-img0 = PhotoImage(file="Bouton_demarrage.png")
+img0 = PhotoImage(file=img0_path)
 b0 = Button(
     frame1,
     image=img0,
@@ -188,9 +205,9 @@ b0 = Button(
     command=start_nas_serv,
     relief="flat"
 )
-b0.grid(row=0,column=0,padx=10)
+b0.grid(row=0, column=0, padx=10)
 
-img1 = PhotoImage(file="Bouton_connexion_nas.png")
+img1 = PhotoImage(file=img1_path)
 b1 = Button(
     frame1,
     image=img1,
@@ -199,7 +216,7 @@ b1 = Button(
     command=show_ip_entry,
     relief="flat"
 )
-b1.grid(row=0,column=1,padx=10)
+b1.grid(row=0, column=1, padx=10)
 
 # Création des Labels pour les boutons gauche
 label_tableau = Label(window, bg="#403c3c")
@@ -209,7 +226,7 @@ label_fichiers.place(x=-2, y=230)
 label_parametres = Label(window, bg="#403c3c")
 label_parametres.place(x=-2, y=290)
 
-img2 = PhotoImage(file="Bouton_tableau.png")
+img2 = PhotoImage(file=img2_path)
 b2 = Button(
     label_tableau,
     image=img2,
@@ -220,18 +237,18 @@ b2 = Button(
 )
 b2.pack(padx=0, pady=0)
 
-img3 = PhotoImage(file="Bouton_fichiers.png")
+img3 = PhotoImage(file=img3_path)
 b3 = Button(
     label_fichiers,
     image=img3,
     borderwidth=0,
     highlightthickness=0,
-    command=show_frame2,  # Appel sans argument
+    command=show_frame2,
     relief="flat"
 )
 b3.pack(padx=0, pady=0)
 
-img4 = PhotoImage(file="Bouton_parametres.png")
+img4 = PhotoImage(file=img4_path)
 b4 = Button(
     label_parametres,
     image=img4,
@@ -242,7 +259,7 @@ b4 = Button(
 )
 b4.pack(padx=0, pady=0)
 
-img5 = PhotoImage(file="bouton_rafraichir.png")
+img5 = PhotoImage(file=img5_path)
 b5 = Button(
     window,
     image=img5,
