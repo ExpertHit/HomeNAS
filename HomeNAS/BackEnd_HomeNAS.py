@@ -44,6 +44,12 @@ def upload_file():
     else:
         # Renvoyer une réponse JSON indiquant une erreur lors du téléversement du fichier
         return jsonify({"message": "Erreur lors du téléversement du fichier"})
+    
+# Fonction pour afficher les fichiers dans le dossier du NAS
+@app.route("/files", methods=["GET"])
+def list_files():
+    files = os.listdir(storage_path)
+    return jsonify(files)
 
 if __name__ == "__main__":
     # Lancer l'application Flask sur l'adresse 0.0.0.0 (toutes les interfaces) et sur le port 8000
