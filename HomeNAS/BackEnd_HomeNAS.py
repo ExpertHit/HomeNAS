@@ -75,6 +75,16 @@ def delete_file(filename):
         return "Fichier supprimé avec succès", 200
     else:
         return "Fichier non trouvé", 404
+    
+
+@app.route('/api/status', methods=['GET'])
+def server_status():
+    # Mettez ici toute logique pour vérifier l'état du serveur.
+    # Par exemple, vous pouvez vérifier les connexions à la base de données,
+    # les services externes, etc.
+
+    # Si le serveur est en ligne, renvoyer un code d'état 200
+    return jsonify(message="Le serveur est en ligne"), 200
 
     
 if __name__ == "__main__":
