@@ -48,7 +48,7 @@ def affichage_remplissage_ip():
     else:
         messagebox.showwarning("Adresse IP", "Aucune adresse IP saisie")
 
-def creation_cadre_ip(ip, start_row, start_column, nas_status=False):
+def creation_cadre_ip(ip, start_row, start_column):
     global selected_var
     
     ip_cadre = Frame(
@@ -66,12 +66,12 @@ def creation_cadre_ip(ip, start_row, start_column, nas_status=False):
 
     statut_cadre = Frame(ip_cadre, bg="#4B4949")  # Création d'une sous-frame pour le statut et la case à cocher
     statut_cadre.pack(pady=10)
-
-    statut_couleur = "#089016" if nas_status else "#FF0000"
+    
+    statut_couleur = "#089016" if server_en_ligne() else "#FF0000"
     statut_point = Label(statut_cadre, text="   ", bg=statut_couleur) # Point vert ou rouge indiquant l'état du NAS
     statut_point.pack(side=LEFT, padx=10)
 
-    statut_label = Label(statut_cadre, text="En ligne" if nas_status else "Hors ligne", bg="#4B4949", fg="white") # Texte indiquant l'état du NAS
+    statut_label = Label(statut_cadre, text="En ligne" if server_en_ligne() else "Hors ligne", bg="#4B4949", fg="white") # Texte indiquant l'état du NAS
     statut_label.pack(side=LEFT)
 
     verfi_var = BooleanVar()
@@ -247,6 +247,19 @@ def mettre_a_jour_fichier_backend():
 
     with open(fichier_backend, "w") as f:
         f.writelines(lignes)
+
+def server_en_ligne():
+    try:
+        response = requests.head(f"http://{ip_address}:8000/api/status", timeout=3)
+        if response.status_code == 200:
+            print("Le serveur est en ligne.")
+            return True
+        else:
+            print("Le serveur n'est pas disponible.")
+            return False
+    except requests.ConnectionError:
+        print("Impossible de se connecter au serveur.")
+        return False
 
 # Interface -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
