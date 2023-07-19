@@ -7,10 +7,13 @@ import platform
 app = Flask(__name__)
 
 # Chemin du dossier de stockage des fichiers
-if platform.system() == "Darwin":  # Vérifier si le système d'exploitation est macOS
-    storage_path = "/Users/antho/Partage"
-else:
-    storage_path = "C:\\Partage"  # Chemin par défaut pour les autres systèmes d'exploitation
+storage_path = "C:/Partage"
+
+# if platform.system() == "Darwin":  # Vérifier si le système d'exploitation est macOS
+    # storage_path = "/Users/Partage"
+# else:
+# Chemin par défaut pour les autres systèmes d'exploitation
+
 
 # Utiliser storage_path pour vos opérations de stockage
 
