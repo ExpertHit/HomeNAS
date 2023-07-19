@@ -110,6 +110,26 @@ def supprimer_ip_cadre(ip_cadre):
             ip_cadres_totals.remove(ip_cadre_donnees)
             break
 
+def fermer_port():
+    for proc in psutil.process_iter():
+        try:
+            for conn in proc.connections():
+                if conn.laddr.port == 8000:
+                    proc.kill()
+                    print("Port fermé avec succès")
+                    return
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+    print("Erreur lors de la fermeture du port")
+
+def fermeture_app():
+    subprocess.run(["lsof", "-ti", ":8000", "-sTCP:LISTEN", "-n", "-P", "-Fp"]) # Fermer le processus utilisant le port 8000
+
+def on_closing():
+    fermeture_app() # Appelé lorsque la fenêtre est fermée
+    window.destroy()
+
+
 # Fonctions pour la page des fichiers ***
 
 # Fonction interne pour parcourir et téléverser un fichier
@@ -143,13 +163,18 @@ def obtenir_fichiers_du_nas():
         file_label = Label(fichier_cadre, text="Erreur lors de la récupération des fichiers du NAS", bg="#4B4949", fg="white")
         file_label.pack(pady=5)
 
-def creation_cadre_fichier(file):
+def creation_cadre_fichier(fichier):
     fichier_cadre = Frame(fichier_liste, bg="#4B4949", bd=1, pady=10, padx=100)
     fichier_cadre.pack(fill=X)
-    fichier_label = Label(fichier_cadre, text=file, bg="#4B4949", fg="white", highlightbackground="#089016")
+    fichier_label = Label(fichier_cadre, text=fichier, bg="#4B4949", fg="white", highlightbackground="#089016")
     fichier_label.pack(side=LEFT, pady=5)
-    fichier_bouton = Button(fichier_cadre, text="Télécharger", bg="#089016", fg="white", bd=0, relief="flat")
-    fichier_bouton.pack(side=RIGHT, pady=5, padx=(20, 0))
+
+    supprimer_bouton = Button(fichier_cadre, text="Supprimer", bg="#FF0000", fg="white", bd=0, relief="flat", command=lambda: supprimer_fichier(fichier))
+    supprimer_bouton.pack(side=RIGHT, pady=5, padx=(20, 0))
+
+    telecharger_bouton = Button(fichier_cadre, text="Télécharger", bg="#089016", fg="white", bd=0, relief="flat", command=lambda: telecharger_fichier(fichier))
+    telecharger_bouton.pack(side=RIGHT, pady=5, padx=(20, 0))
+
     fichier_cadre.file_label = fichier_label  # Ajouter une référence au label dans la frame
     fichier_cadre.bind("<Button-1>", si_fichier_cadre_clic)
 
@@ -164,30 +189,34 @@ def si_fichier_cadre_clic(event):
     else:
         fichier_cadre.config(bg="#089016")  # Mettre en évidence la frame sélectionnée
 
+def telecharger_fichier(filename):
+        dossier_chemin = filedialog.askdirectory()
+        if dossier_chemin:
+            url = f"http://{ip_address}:8000/download/{filename}" 
+            response = requests.get(url)
+            if response.status_code == 200:
+                contenu_fichier = response.content
+                chemin_complet = os.path.join(dossier_chemin, filename)
+                with open(chemin_complet, 'wb') as fichier_local:
+                    fichier_local.write(contenu_fichier)
+                print("Fichier téléchargé avec succès")
+            else:
+                print("Erreur lors du téléchargement du fichier")
+
+def supprimer_fichier(fichier):
+    url = f"http://{ip_address}:8000/delete/{fichier}"
+    response = requests.post(url)
+    if response.status_code == 200:
+        print("Fichier supprimé avec succès")
+        # Rafraîchir la liste des fichiers après la suppression
+        vider_liste_fichier()
+    else:
+        print("Erreur lors de la suppression du fichier")
+
 # Fonctions pour le test *
 
 def bouton_clic():
     print("Button Clicked")
-
-def fermer_port():
-    for proc in psutil.process_iter():
-        try:
-            for conn in proc.connections():
-                if conn.laddr.port == 8000:
-                    proc.kill()
-                    print("Port fermé avec succès")
-                    return
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            pass
-    print("Erreur lors de la fermeture du port")
-
-def fermeture_app():
-    subprocess.run(["lsof", "-ti", ":8000", "-sTCP:LISTEN", "-n", "-P", "-Fp"]) # Fermer le processus utilisant le port 8000
-
-def on_closing():
-    fermeture_app() # Appelé lorsque la fenêtre est fermée
-    window.destroy()
-
 
 # Interface -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -283,8 +312,8 @@ Bouton_rafraichir = Button(
     command=bouton_clic,
     relief="flat"
 )
-Bouton_rafraichir.place(x=950, y=5)
-
+# Positionnement du bouton en haut à droite (10 pixels du haut, tout à droite)
+Bouton_rafraichir.place(relx=1.0, rely=0, anchor="ne", x=-10)
 
 # Interface du tableau de bord ***
 
@@ -321,16 +350,21 @@ Bouton_connexion_nas = Button(
 )
 Bouton_connexion_nas.grid(row=0, column=1, padx=10)
 
+fermeture_bouton = Button(
+    cadre_1, 
+    text="Fermer le port", 
+    width=16,
+    height=12,
+    bg="#4B4949",
+    fg="white",
+    relief="flat",
+    command=fermer_port
+    ) 
+fermeture_bouton.grid(row=0, column=2, padx=10) # Création du bouton pour fermer le port
 
 # Interface de la page des fichiers ***
 
 fichiers_cadres_totals = []
-
-scrollbar = Scrollbar(cadre_2)
-scrollbar.pack(side=RIGHT, fill=Y)
-
-fermeture_bouton = Button(cadre_2, text="Fermer le port", command=fermer_port) # Création du bouton pour fermer le port
-fermeture_bouton.pack()
 
 Bouton_envoi_fichier = Button(
     cadre_2,
@@ -349,13 +383,9 @@ Bouton_envoi_fichier.pack(pady=5) # Création d'un bouton b6
 fichier_liste = Listbox(cadre_2, bg="#403c3c", fg="white") # Création d'une zone de liste pour afficher les fichiers
 fichier_liste.configure(width=100, height=20)
 
-scrollbar.config(command=fichier_liste.yview)
-fichier_liste.config(yscrollcommand=scrollbar.set)
-
 fichier_liste.pack(pady=10, padx=20, fill=BOTH, expand=True) # Placement des éléments dans le cadre frame2
-scrollbar.pack(side=RIGHT, fill=Y)
 
-Bouton_actualiser = Button(cadre_2, text="Mettre à jour", command=obtenir_fichiers_du_nas) # Création d'un bouton pour mettre à jour la liste des fichiers
+Bouton_actualiser = Button(cadre_2, text="Mettre à jour", command=obtenir_fichiers_du_nas, bg="#089016", fg="white", bd=0, relief="flat") # Création d'un bouton pour mettre à jour la liste des fichiers
 Bouton_actualiser.pack(pady=5)
 
 # Lancement de l'interface ***
