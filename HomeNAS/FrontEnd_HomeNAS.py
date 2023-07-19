@@ -353,18 +353,18 @@ Bouton_chemin_nas = Button(
 )
 Bouton_chemin_nas.pack(padx=0, pady=0)
 
-Bouton_rafraichir_chemin = os.path.join(file_dir, "Bouton_rafraichir.png")
-Bouton_rafraichir_img = PhotoImage(file=Bouton_rafraichir_chemin)
-Bouton_rafraichir = Button(
-    window,
-    image=Bouton_rafraichir_img,
-    borderwidth=0,
-    highlightthickness=0,
-    command=bouton_clic,
-    relief="flat"
-)
+# Bouton_rafraichir_chemin = os.path.join(file_dir, "Bouton_rafraichir.png")
+# Bouton_rafraichir_img = PhotoImage(file=Bouton_rafraichir_chemin)
+# Bouton_rafraichir = Button(
+    # window,
+    # image=Bouton_rafraichir_img,
+    # borderwidth=0,
+    # highlightthickness=0,
+    # command=bouton_clic,
+    # relief="flat"
+#)
 # Positionnement du bouton en haut à droite (10 pixels du haut, tout à droite)
-Bouton_rafraichir.place(relx=1.0, rely=0, anchor="ne", x=-10)
+#Bouton_rafraichir.place(relx=1.0, rely=0, anchor="ne", x=-10)
 
 # Interface du tableau de bord ***
 
