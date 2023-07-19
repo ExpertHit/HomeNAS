@@ -2,7 +2,7 @@
 
 Hello, this is a school project, so if you're looking for something serious, you'd better move along. 
 
-Bonjour, ceci est projet d'école, si vous rechercher quelque chose de sérieux, il est mieux pour vous de passer votre chemin 
+Bonjour, ceci est un projet d'école, si vous rechercher quelque chose de sérieux, il est mieux pour vous de passer votre chemin 
 
 Pour commencer il faut installer trois paquets :
 
