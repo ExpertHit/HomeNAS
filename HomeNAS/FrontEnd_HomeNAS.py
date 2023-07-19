@@ -218,6 +218,36 @@ def supprimer_fichier(fichier):
 def bouton_clic():
     print("Button Clicked")
 
+# Fonctions pour mettre à jour le chemin avec les parametres
+
+def bouton_parametre():
+    modifier_chemin_stockage()
+
+
+def modifier_chemin_stockage():
+    global storage_path
+    nouveau_chemin = filedialog.askdirectory()
+    if nouveau_chemin:
+        storage_path = nouveau_chemin
+        messagebox.showinfo("Chemin de stockage", f"Le chemin de stockage a été mis à jour : {storage_path}")
+        mettre_a_jour_fichier_backend()
+    else:
+        messagebox.showwarning("Chemin de stockage", "Aucun nouveau chemin sélectionné")
+
+def mettre_a_jour_fichier_backend():
+    fichier_backend = os.path.join(file_dir, "BackEnd_HomeNas.py")
+    with open(fichier_backend, "r") as f:
+        lignes = f.readlines()
+
+    nouveau_chemin = f'storage_path = "{storage_path}"\n'
+    for i, ligne in enumerate(lignes):
+        if "storage_path =" in ligne:
+            lignes[i] = nouveau_chemin
+            break
+
+    with open(fichier_backend, "w") as f:
+        f.writelines(lignes)
+
 # Interface -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -238,7 +268,7 @@ barre_lateral = Canvas(
     window,
     bg="#4B4949",
     width=183,
-    height=1000,
+    height=1080,
     bd=0,
     highlightthickness=0,
     relief="ridge"
@@ -256,6 +286,27 @@ barre_superieur = Canvas(
     relief="ridge"
 )
 barre_superieur.place(x=0, y=0) # Création du fond de la barre en haut de la page
+
+# Chemin vers l'image au format PNG sans contours blancs
+logo1_path = os.path.join(file_dir, "Logo1.png")
+
+# Création de l'image sans contours blancs
+logo1 = PhotoImage(file=logo1_path)
+
+# Création du widget Label pour afficher l'image
+logo1_label = Label(window, image=logo1, bd=0, highlightthickness=0)
+logo1_label.place(x=60, y=90)
+
+# Chemin vers l'image au format PNG avec de la transparence
+logo2_path = os.path.join(file_dir, "Logo2.png")
+
+# Création de l'image avec de la transparence
+logo2 = PhotoImage(file=logo2_path)
+
+# Création du widget Label pour afficher l'image
+logo2_label = Label(window, image=logo2, bd=0, highlightthickness=0)
+logo2_label.place(x=10, y=5)
+
 
 tableau_label = Label(window, bg="#403c3c")
 tableau_label.place(x=-2, y=170)
@@ -287,22 +338,22 @@ Bouton_fichiers = Button(
 )
 Bouton_fichiers.pack(padx=0, pady=0)
 
-parametres_label = Label(window, bg="#403c3c")
-parametres_label.place(x=-2, y=290)
+chemin_nas_label = Label(window, bg="#403c3c")
+chemin_nas_label.place(x=-2, y=290)
 
-Bouton_parametres_chemin = os.path.join(file_dir, "Bouton_parametres.png")
-Bouton_parametres_img = PhotoImage(file=Bouton_parametres_chemin)
-Bouton_parametres = Button(
-    parametres_label,
-    image=Bouton_parametres_img,
+Bouton_chemin_nas_chemin = os.path.join(file_dir, "Bouton_chemin_nas.png")
+Bouton_chemin_nas_img = PhotoImage(file=Bouton_chemin_nas_chemin)
+Bouton_chemin_nas = Button(
+    chemin_nas_label,
+    image=Bouton_chemin_nas_img,
     borderwidth=0,
     highlightthickness=0,
-    command=bouton_clic,
+    command=bouton_parametre,
     relief="flat"
 )
-Bouton_parametres.pack(padx=0, pady=0)
+Bouton_chemin_nas.pack(padx=0, pady=0)
 
-Bouton_rafraichir_chemin = os.path.join(file_dir, "bouton_rafraichir.png")
+Bouton_rafraichir_chemin = os.path.join(file_dir, "Bouton_rafraichir.png")
 Bouton_rafraichir_img = PhotoImage(file=Bouton_rafraichir_chemin)
 Bouton_rafraichir = Button(
     window,
@@ -350,30 +401,31 @@ Bouton_connexion_nas = Button(
 )
 Bouton_connexion_nas.grid(row=0, column=1, padx=10)
 
-fermeture_bouton = Button(
-    cadre_1, 
-    text="Fermer le port", 
-    width=16,
-    height=12,
-    bg="#4B4949",
-    fg="white",
-    relief="flat",
-    command=fermer_port
-    ) 
-fermeture_bouton.grid(row=0, column=2, padx=10) # Création du bouton pour fermer le port
+Bouton_port_chemin = os.path.join(file_dir, "Bouton_fermer_port.png")
+Bouton_port_img = PhotoImage(file=Bouton_port_chemin)
+Bouton_port = Button(
+    boutons_conteneur,
+    image=Bouton_port_img,
+    borderwidth=0,
+    highlightthickness=0,
+    command=fermer_port,
+    relief="flat"
+)
+Bouton_port.grid(row=0, column=2, padx=10)  # Création du bouton pour fermer le port
 
 # Interface de la page des fichiers ***
 
 fichiers_cadres_totals = []
 
+Bouton_envoi_fichier_chemin = os.path.join(file_dir, "Bouton_envoi_fichier.png")
+Bouton_envoi_fichier_img = PhotoImage(file=Bouton_envoi_fichier_chemin )
 Bouton_envoi_fichier = Button(
     cadre_2,
-    borderwidth=0,
+    borderwidth=1,
     highlightthickness=0,
+    image=Bouton_envoi_fichier_img,
     command=parcourir_pour_envoi(),
     text="Envoyer un fichier dans le serveur NAS",
-    width=100,
-    height=2,
     bg="#089016",
     fg="white",
     relief="flat"
@@ -385,7 +437,18 @@ fichier_liste.configure(width=100, height=20)
 
 fichier_liste.pack(pady=10, padx=20, fill=BOTH, expand=True) # Placement des éléments dans le cadre frame2
 
-Bouton_actualiser = Button(cadre_2, text="Mettre à jour", command=obtenir_fichiers_du_nas, bg="#089016", fg="white", bd=0, relief="flat") # Création d'un bouton pour mettre à jour la liste des fichiers
+Bouton_actualiser_chemin = os.path.join(file_dir, "Bouton_actualiser.png")
+Bouton_actualiser_img = PhotoImage(file=Bouton_actualiser_chemin )
+Bouton_actualiser = Button(
+    cadre_2, 
+    text="Mettre à jour", 
+    image=Bouton_actualiser_img,
+    command=obtenir_fichiers_du_nas, 
+    bg="#089016", 
+    fg="white", 
+    bd=0, 
+    relief="flat"
+    ) # Création d'un bouton pour mettre à jour la liste des fichiers
 Bouton_actualiser.pack(pady=5)
 
 # Lancement de l'interface ***
