@@ -8,9 +8,11 @@ app = Flask(__name__)
 
 # Chemin du dossier de stockage des fichiers
 if platform.system() == "Darwin":  # Vérifier si le système d'exploitation est macOS
-    storage_path = "/Users/antho/Partage" #chemin a définir selon le nom de l'utilisateur
+    storage_path = "/Users/antho/Partage"
 else:
     storage_path = "C:\\Partage"  # Chemin par défaut pour les autres systèmes d'exploitation
+
+# Utiliser storage_path pour vos opérations de stockage
 
 
 # Créer une instance de l'application Flask
@@ -21,7 +23,6 @@ app = Flask(__name__)
 def download_file(filename):
     # Construire le chemin du fichier en joignant le chemin de stockage (storage_path) et le nom du fichier
     file_path = os.path.join(storage_path, filename)
-
     # Vérifier si le fichier existe
     if os.path.isfile(file_path):
         # Si le fichier existe, l'envoyer en tant que pièce jointe
@@ -58,6 +59,21 @@ def list_files():
     files = os.listdir(storage_path)
     return jsonify(files)
 
+# Point d'extrémité pour supprimer un fichier
+@app.route("/delete/<filename>", methods=["POST"])
+def delete_file(filename):
+    # Construire le chemin du fichier en joignant le chemin de stockage (storage_path) et le nom du fichier
+    file_path = os.path.join(storage_path, filename)
+    
+    # Vérifier si le fichier existe avant de le supprimer
+    if os.path.exists(file_path):
+        # Supprimer le fichier
+        os.remove(file_path)
+        return "Fichier supprimé avec succès", 200
+    else:
+        return "Fichier non trouvé", 404
+
+    
 if __name__ == "__main__":
     # Lancer l'application Flask sur l'adresse 0.0.0.0 (toutes les interfaces) et sur le port 8000
     app.run(host="0.0.0.0", port=8000)
