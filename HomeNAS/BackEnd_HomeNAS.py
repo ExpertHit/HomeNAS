@@ -1,10 +1,17 @@
 from flask import Flask, request, jsonify, send_file
 import os
+import sys
+import platform
+    
 
 app = Flask(__name__)
 
 # Chemin du dossier de stockage des fichiers
-storage_path = "C:\\Partage"
+if platform.system() == "Darwin":  # Vérifier si le système d'exploitation est macOS
+    storage_path = "/Users/antho/Partage" #chemin a définir selon le nom de l'utilisateur
+else:
+    storage_path = "C:\\Partage"  # Chemin par défaut pour les autres systèmes d'exploitation
+
 
 # Créer une instance de l'application Flask
 app = Flask(__name__)
