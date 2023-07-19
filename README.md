@@ -1,5 +1,8 @@
 # HomeNAS
 
+Bonjour, ceci est projet d'école, si vous rechercher quelquechose de sérieux, il est mieux pour vous de passer votre chemin 
+Hello, this is a school project, so if you're looking for something serious, you'd better move along. 
+
 Pour commencer il faut installer trois paquets :
 
 Flask 
