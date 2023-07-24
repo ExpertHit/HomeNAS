@@ -69,4 +69,4 @@ Il est egalement possible de le modifier depuis l'application via le bouton **"C
 Pour lancer l'application, lancer le **FrontEnd_Home.py**
 
 (Nous sommes actuellement en train de travailler rentre l'application en .exe ;))
-N'hésité pas a proposer des idées d'amélioration ou des fonctionnalités, ne seront heureux de voir du soutient et feront notre maximum pour les ajouter.
+N'hésité pas a proposer des idées d'amélioration ou des fonctionnalités, nous seront heureux de voir du soutient et feront notre maximum pour les ajouter.
